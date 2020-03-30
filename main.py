@@ -2,7 +2,8 @@ from Quest import Quest
 from DefaultGenerator import DefaultGenerator
 
 if __name__ == "__main__":
-	testQuests = [(1, {}) for i in range(0, 20)]
+	testQuests =  [(2, {}) for i in range(0, 10)]
+	testQuests += ([(3, {}) for i in range(0, 10)])
 
 	generated = DefaultGenerator(testQuests)
 
