@@ -11,6 +11,8 @@ class DefaultGenerator(IGenerator):
 		self._questsFunctionsTable[1] = self.__quest1
 		self._questsFunctionsTable[2] = self.__quest2
 		self._questsFunctionsTable[3] = self.__quest3
+		self._questsFunctionsTable[9] = self.__quest9
+		self._questsFunctionsTable[10] = self.__quest10
 
 		counter = 1
 		for number, args in self._request:
@@ -22,6 +24,8 @@ class DefaultGenerator(IGenerator):
 
 			self._quests[counter] = self._questsFunctionsTable[number](**args)
 			counter += 1
+		
+		self.quests[counter] = self._questsFunctionsTable[10](N = 5, K = 2, P = 0.51)
 
 	# Задача 1.
 	def __quest1(self, **kwargs) -> Quest:
@@ -98,7 +102,7 @@ class DefaultGenerator(IGenerator):
 		answer = float(f"{resultsWhite * resultsBlack / resultsAll : .4f}") # Эта как - единственное, шо я нагуглил
 
 		decisionProgress =  f"Количество исходов в данной задаче равняется количеству способов выбрать {pickNumber} предметов из {n}."
-		decisionProgress += f" А это, в свою очередь является количеством сочитаний C из {pickNumber} из {n} = {resultsAll}. Аналогичным образом"
+		decisionProgress += f" А это, в свою очередь является количеством сочитаний C из {n} по {pickNumber} = {resultsAll}. Аналогичным образом"
 		decisionProgress += f" вычисляем количество способов вытащить заданные предметы из общих куч. В результате получаем следующие вычисления:\n"
 		decisionProgress += f"P = {resultsWhite} * {resultsBlack} / {resultsAll} = {answer}.\n"
 		decisionProgress += f"{answer * 100:.2f} % является ответом для данной задачи."
@@ -161,5 +165,59 @@ class DefaultGenerator(IGenerator):
 
 		answer = float(f"{answer : .4f}")
 		decisionProgress += f"Ответ: {answer} %."
+
+		return Quest(template, decisionProgress, answer)
+
+	def __quest9(self, **kwargs) -> Quest:
+		casesCount = 3
+		cases = dict() # Словарь вида Буква случая -> (Вероятность заболеть, вероятность выжить)
+
+		def getP(max = 1) -> float:
+			"""Генерирует и округляет вероятность"""
+			p = random.uniform(0, max)
+			return float(f"{p : .2f}")
+
+		# Раскрою цикл так, чтобы точно оставались шансы. В цикле иногда багуется, не смог исправить (Лень))0)00
+		cases['A'] = (random.randrange(10, 70), getP(0.95))
+		cases['B'] = (random.randrange(10, 100 - cases['A'][0]), getP(0.95))
+		cases['C'] = (100 - cases['A'][0] - cases['B'][0], getP(0.95))
+
+		for k in cases.keys():
+			cases[k] = (cases[k][0] * 0.01, cases[k][1]) # хз моно ли красивее сделать
+
+		templatesList = [
+			f"В больницу поступают в среднем {cases['A'][0]} больных с заболеванием А, {cases['B'][0]} с заболеванием В, {cases['C'][0]} с заболеванием "
+			f"С. Вероятность полного выздоровления для каждого заболевания соответственно равны {cases['A'][1]}, {cases['B'][1]} и {cases['C'][1]}. "
+			f"Больной был выписан здоровым. Найти вероятность того, что он страдал заболеванием А."
+		]
+		template = random.choice(templatesList)
+
+		PZ = cases['A'][0] * cases['A'][1] + cases['B'][0] * cases['B'][1] + cases['C'][0] * cases['C'][1]
+		print(f"{cases['A'][0]} * {cases['A'][1]} + {cases['B'][0]} * {cases['B'][1]} + {cases['C'][0]} * {cases['C'][1]}")
+		PAZ = cases['A'][1] * cases['A'][0] / PZ
+
+		PZ = float(f"{PZ : .2f}")
+		answer = float(f"{PAZ : .2f}")
+
+		decisionProgress =  f"Обозначим как P(Z) вероятность того, что больной выписан здоровым. P(Z) = {PZ}. Теперь мы можем вычислить  "
+		decisionProgress += f"вероятность того, что он болел заболеванием А по формуле Бейеса: P(A / Z) = {answer}. Ответ на задачу: {answer}"
+
+		return Quest(template, decisionProgress, answer)
+
+	# TODO Нужны зависимости в генерации, а то часто бывают ответы уровня 0-0.5 и не более.
+	def __quest10(self, **kwargs):
+		n = kwargs["N"] if "N" in kwargs else random.randrange(12, 25)
+		k = kwargs["K"] if "K" in kwargs else random.randrange(int(n * 0.1), int(n * 0.5))
+		p = kwargs["P"] if "P" in kwargs else random.uniform(0.2, 0.6)
+		p = float(f"{p : .2f}")
+
+		templatesList = [
+			f"За день в магазине было {n} покупателей. Вероятность найти покупку для каждого из них одинакова и равна {p}. Найти вероятность того, что {k} покупателей нашли покупку."
+		]
+		template = random.choice(templatesList)
+
+		answer = Combinatorics.combinations(n, k) * p**k * (1-p)**(n-k)
+		answer = float(f"{answer : .2f}")
+		decisionProgress =  f"Воспользуемся распределением Бернулли и получим ответ: {answer}"
 
 		return Quest(template, decisionProgress, answer)
