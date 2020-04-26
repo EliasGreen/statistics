@@ -13,7 +13,7 @@ class App(object):
         # Добавление главной картинки
         self.canvas = Canvas(root, width=256, height=188)
         self.canvas.place(relx=.5, rely=.3, anchor="c")
-        self.img = ImageTk.PhotoImage(Image.open("C:\\Users\\admin\\Desktop\\rsz_dicessex.png"))
+        self.img = ImageTk.PhotoImage(Image.open("C:\\Users\\admin\\Desktop\\Screens\\rsz_dicessex.png"))
         self.canvas.create_image(0, 0, anchor=NW, image=self.img)
 
         # Начальные графические параметры главного экрана приложения
@@ -34,12 +34,13 @@ class App(object):
         vars_gen_button = Button(text="Сгенерировать варианты", command=self.generate_variants)
         vars_gen_button.place(relx=.5, rely=.8, anchor="c")
 
-        # Кнопка обработки удаления вариантов
-        vars_del_button = Button(text="Удалить сгенерированные варианты", command=self.delete_docx_variants)
+        # Кнопка обработки показа вариантов
+        vars_del_button = Button(text="Открыть папку с вариантами", command=self.show_docx_variants)
         vars_del_button.place(relx=.5, rely=.9, anchor="c")
 
     # Вспомогательная функция вывода информации об успешности генерации вариантов
     def show_gen_results(self):
+
         if self.vars_count.get() != '' and int(self.vars_count.get()) > 0:
             messagebox.showinfo("Успешная генерация\n ",
                                    "Сгенерированные варианты находятся в "
@@ -57,18 +58,12 @@ class App(object):
     def generate_variants(self):
         self.show_gen_results()
 
-    # Метод запуска процесса удаления сгенерованных вариантов
-    # посредством удаления текстовых документов в текущей папке
-    # с опредленным паттерном названия
-    # TODO добавить паттерн и само удаление
-    def delete_docx_variants(self):
-        answer = messagebox.askyesno(title="Удаление сгенерированных вариантов", message="Удалить файлы типа docx?")
-        if answer:
-            messagebox.showwarning("Успешное удаление\n ",
-                                 "Файлы были удалены")
+    # Метод открытия папки с вариантами
+    def show_docx_variants(self):
+        os.system('explorer ' + os.path.dirname(os.path.abspath(__file__)))
 
 
 root = Tk()
 app = App(root)
-root.wm_iconbitmap("C:\\Users\\admin\\Desktop\\favicon.ico")
+root.wm_iconbitmap("C:\\Users\\admin\\Desktop\\Screens\\favicon.ico")
 root.mainloop()
