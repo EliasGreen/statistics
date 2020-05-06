@@ -1,3 +1,5 @@
+from docx import Document
+
 from copy import copy
 from Quest import Quest
 
@@ -16,6 +18,7 @@ class IGenerator():
 		self._request = copy(requestQuests)
 		self._quests = dict()
 		self._questsFunctionsTable = dict() # Словарь функций для генерации.
+		self._document = Document()
 
 	@property
 	def quests(self) -> dict:

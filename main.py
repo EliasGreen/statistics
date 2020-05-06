@@ -2,21 +2,8 @@ from Quest import Quest
 from DefaultGenerator import DefaultGenerator
 
 if __name__ == "__main__":
-	testQuests =  [(9, {}) for i in range(0, 5)]
-	testQuests =  [(10, {}) for i in range(0, 5)]
+	testQuests =  [i for i in range(1, 18)]
 
-	generated = DefaultGenerator(testQuests)
-
-	# Как тут консольный вывод красивый делался, забыл уже.
-	for i in generated.quests.values():
-		print("----------------------------------")
-		print()
-		print("Задание:")
-		print(i.wording)
-		print()
-		print("Ход решения:")
-		print(i.decisionProgress)
-		print()
-		print("Ответ:", end=' ')
-		print(i.answer)
-		print()
+	for i in range(1, 2):
+		            # Задачи - Вариант - Имя документа
+		generated = DefaultGenerator(testQuests, i, f"variant_{i}")
