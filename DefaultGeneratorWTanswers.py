@@ -19,13 +19,9 @@ from scipy.special import erf
 
 Phi = lambda x: erf(x/2**0.5)/2
 
-class DefaultGenerator(IGenerator):
+class DefaultGeneratorWTanswers(IGenerator):
 	def __init__(self, requestQuests: list, variantNum: int, wordFileName: str):
 		super().__init__(requestQuests)
-
-		self.tasks = []
-
-		self._documentWTAnsw = Document()
 
 		# Установка функций-генераторов для каждого номера
 		self._questsFunctionsTable[1] = self.__quest1
@@ -60,26 +56,8 @@ class DefaultGenerator(IGenerator):
 		self._document.styles['QuestHeader'].font.size = docx.shared.Pt(16)
 		self._document.styles['QuestHeader'].font.bold = True
 
-		# ------------------------------------- БЕЗ ОТВЕТОВ
-
 		header = self._document.add_heading(f'Типовой расчет. Вариант {variantNum}\n', 0)
 		header.style = self._document.styles['Header']
-		header.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
-
-		self._documentWTAnsw.styles['Normal'].font.name = 'Times New Roman'
-		self._documentWTAnsw.styles['Normal'].font.size = docx.shared.Pt(14)
-
-		self._documentWTAnsw.styles['Header'].font.name = 'Times New Roman'
-		self._documentWTAnsw.styles['Header'].font.size = docx.shared.Pt(18)
-		self._documentWTAnsw.styles['Header'].font.bold = True
-
-		self._documentWTAnsw.styles.add_style('QuestHeader', docx.enum.style.WD_STYLE_TYPE.PARAGRAPH)
-		self._documentWTAnsw.styles['QuestHeader'].font.name = 'Times New Roman'
-		self._documentWTAnsw.styles['QuestHeader'].font.size = docx.shared.Pt(16)
-		self._documentWTAnsw.styles['QuestHeader'].font.bold = True
-
-		header = self._documentWTAnsw.add_heading(f'Типовой расчет. Вариант {variantNum}\n', 0)
-		header.style = self._documentWTAnsw.styles['Header']
 		header.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
 
 		counter = 1
@@ -107,8 +85,7 @@ class DefaultGenerator(IGenerator):
 		# 	paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.JUSTIFY
 
 		# print(self._quests[7]._decisionProgress)
-		self._document.save(wordFileName + '[с ответами].docx')
-		self._documentWTAnsw.save(wordFileName + '.docx')
+		self._document.save(wordFileName + '.docx')
 
 	# Задача про шары. В корзине некоторое количество шаров. Вытаскивают кучку. Вытащенные шары ОДИНАКОВЫ
 	def __quest1(self) -> Quest:
@@ -146,20 +123,6 @@ class DefaultGenerator(IGenerator):
 
 		paragraph = self._document.add_paragraph(f"\t{template}\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 1\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{template}\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 1, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(template)
 
 	# Задача про шары. В корзине некоторое количество шаров. Вытаскивают кучку. Вытащенные шары не являются одинаковыми
 	def __quest2(self) -> Quest:
@@ -205,20 +168,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{template}\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 2\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{template}\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 2, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(template)
-
 	# Задача про карты. Вынимаем карты, аки предметы из шайтан-кейса в каэсочке и надеемся на N редких
 	def __quest3(self) -> Quest:
 		cardCount = 32 # Питон, где константы
@@ -248,19 +197,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{template}\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 3\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{template}\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 3, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(template)
 
 	def __quest4(self) -> Quest:
 		# Он тут почему-то ругался на то, что не int в randrange. Выше такого не было, мам!
@@ -303,19 +239,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{template}\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 4\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{template}\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 4, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(template)
 
 	# Попытка не сломаться за N итераций.
 	def __quest5(self) -> Quest:
@@ -352,19 +275,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{template}\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 5\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{template}\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 5, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(template)
 
 	# Вытаскиваем шарики. хз куда
 	# def __quest5(self) -> Quest:
@@ -436,20 +346,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{template}\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 6\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{template}\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-
-		header = self._document.add_heading(f"\tЗадание 6, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(template)
 
 	# Бомбы на мост. Может, тот 5-й сюда?
 	def __quest7(self) -> Quest:
@@ -479,20 +375,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{template}\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 7\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{template}\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-
-		header = self._document.add_heading(f"\tЗадание 7, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(template)
 
 	def __quest8(self):
 		poorChance = [random.randint(2, 10) * 0.01 for i in range(0, 3)]
@@ -517,19 +399,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{template}\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 8\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{template}\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 8, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer : .2f}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(template)
 
 	def __quest9(self) -> Quest:
 		casesCount = 3
@@ -570,19 +439,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{template}\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 9\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{template}\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 9, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(template)
 
 	# # TODO Нужны зависимости в генерации, а то часто бывают ответы уровня 0-0.5 и не более.
 	def __quest10(self):
@@ -605,20 +461,6 @@ class DefaultGenerator(IGenerator):
 
 		paragraph = self._document.add_paragraph(f"\t{template}\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 10\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{template}\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 10, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(template)
 
 	def __tableGenerator(self) -> dict:
 		"""Генератор таблички для 11 и 12 заданий"""
@@ -680,19 +522,7 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\tСлучайная величина ε имеет распределение, заданное следующей таблицей:", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.JUSTIFY
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 11\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\tСлучайная величина ε имеет распределение, заданное следующей таблицей:", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.JUSTIFY
-
 		tableDocument = self._document.add_table(rows = 2, cols = len(table))
-		tableDocument.style = 'Table Grid'
-		for i, (v, p) in enumerate(table.items()):
-			tableDocument.cell(0, i).text = str(v)
-			tableDocument.cell(1, i).text = str(p)
-
-		tableDocument = self._documentWTAnsw.add_table(rows = 2, cols = len(table))
 		tableDocument.style = 'Table Grid'
 		for i, (v, p) in enumerate(table.items()):
 			tableDocument.cell(0, i).text = str(v)
@@ -701,17 +531,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\tПостроить многоугольник распределения и найти функцию распределения F(ε).\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		paragraph = self._documentWTAnsw.add_paragraph(f"\tПостроить многоугольник распределения и найти функцию распределения F(ε).\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 11, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		self._document.add_picture('box11.png')
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(f"\tПостроить многоугольник распределения и найти функцию распределения F(ε).\n")
 
 	def __quest12(self):
 		table = self.__tableGenerator()
@@ -742,19 +561,7 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\tСлучайная величина ε распределение, заданное следующей таблицей:", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 12\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\tСлучайная величина ε распределение, заданное следующей таблицей:", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
 		tableDocument = self._document.add_table(rows = 2, cols = len(table))
-		tableDocument.style = 'Table Grid'
-		for i, (v, p) in enumerate(table.items()):
-			tableDocument.cell(0, i).text = str(v)
-			tableDocument.cell(1, i).text = str(p)
-
-		tableDocument = self._documentWTAnsw.add_table(rows = 2, cols = len(table))
 		tableDocument.style = 'Table Grid'
 		for i, (v, p) in enumerate(table.items()):
 			tableDocument.cell(0, i).text = str(v)
@@ -763,20 +570,9 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\tНайти М(ε), D(ε) и σ(ε).\n", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		paragraph = self._documentWTAnsw.add_paragraph(f"\tНайти М(ε), D(ε) и σ(ε).\n", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
 		decisionProgress =   "Следуая классическим формулам производим вычисления значений, найдем требуемые функции: "
 		decisionProgress += f"M = {Mstr};\n\tD = {Dstr};\n\tфункция σ(ε) равняется корню квадратнму из D(ε), следовательно она равна {O}."
 		answer = "М(ε) = {M}, D(ε) = {D}, σ(ε) = {O}"
-
-		header = self._document.add_heading(f"\tЗадание 12, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{decisionProgress}\n\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(f"\tНайти М(ε), D(ε) и σ(ε).\n")
 
 	def __quest13(self):
 		task13 = ''
@@ -815,21 +611,7 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{task13}", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 13\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{task13}", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 13, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{solving13}\tОтвет:\n{answer13}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
 		self.costil = selected_item
-
-		self.tasks.append(task13)
 
 	def __quest14(self):
 	# Далее идет условие/решение 14-ой задачи
@@ -862,19 +644,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{task14}", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 14\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{task14}", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 14, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{solving14}\tОтвет:\n{answer14}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(task14)
 
 	def __quest15(self):
 		task = ''
@@ -912,19 +681,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{task}", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 15\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{task}", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 15, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{solving}\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(task)
 
 	def __quest16(self):
 		task = ''
@@ -944,35 +700,21 @@ class DefaultGenerator(IGenerator):
 
 		task += f'Пусть ε - нормально распределенная случайная величина с параметрами a = {a_value}, σ = {b_value}. Найти P({low_value} < ε < {high_value})\n'
 
-		solving += f'P({low_value : .4f} < ε < {high_value : .4f}) =\n'
-		solving += f'\tF({high_value : .4f}) - F({low_value : .4f}) =\n'
-		solving += f'\tФ(({high_value : .4f} - {a_value : .4f})/{b_value : .4f}) - Ф(({low_value : .4f} - {a_value : .4f})/{b_value : .4f}) =\n'
-		solving += f'\tФ({(round(high_value - a_value)/b_value, 4)}) - Ф({round((low_value - a_value)/b_value, 4)}) =\n'
-		solving += f'\t{round(Phi((high_value - a_value) / b_value), 4)} - {round(Phi((low_value - a_value) / b_value), 4)} =\n'
-		solving += f'\t{round(Phi((high_value - a_value) / b_value) - Phi((low_value - a_value) / b_value), 4)}\n'
+		solving += f'P({low_value} < ε < {high_value}) =\n'
+		solving += f'\tF({high_value}) - F({low_value}) =\n'
+		solving += f'\tФ(({high_value} - {a_value})/{b_value}) - Ф(({low_value} - {a_value})/{b_value}) =\n'
+		solving += f'\tФ({(high_value - a_value)/b_value}) - Ф({(low_value - a_value)/b_value}) =\n'
+		solving += f'\t{Phi((high_value - a_value) / b_value)} - {Phi((low_value - a_value) / b_value)} =\n'
+		solving += f'\t{Phi((high_value - a_value) / b_value) - Phi((low_value - a_value) / b_value)}\n'
 
 		answer += f'P({low_value} < ε < {high_value}) = '
-		answer += f'{round(Phi((high_value - a_value) / b_value) - Phi((low_value - a_value) / b_value), 4)}\n'
+		answer += f'{Phi((high_value - a_value) / b_value) - Phi((low_value - a_value) / b_value)}\n'
 
 		header = self._document.add_heading(f"\tЗадание 16\n", 2)
 		header.style = self._document.styles['QuestHeader']
 
 		paragraph = self._document.add_paragraph(f"\t{task}", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 16\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{task}", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 16, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{solving}\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(task)
 
 	def __quest17(self):
 		task = ''
@@ -994,14 +736,16 @@ class DefaultGenerator(IGenerator):
 		all_sum_values_list = [1, 2, 3]
 		high_value = low_value + random.choice(all_sum_values_list)
 
-		task += f'Пусть ε - нормально распределенная случайная величина с параметрами a = {a_value}, σ = {b_value}. Найти P(|ε - {a_value}| < {shift_value})\n'
+		task += f'Пусть ε - нормально распределенная случайная величина с параметрами a = {a_value}, б = {b_value}. Найти P(|ε - {a_value}| < {shift_value})\n'
 
 		solving += '(Поскольку из нормально распределенной случайной величины вычитается ее математическое ожидание, можем воспользоваться следующей формулой)\n'
-		solving += f'P(|ε - {a_value}| < {shift_value}) = 2Ф({shift_value}/{b_value}) =\n' + str(round(2*Phi(shift_value/b_value), 4)) + '\n'
+		solving += f'P(|ε - {a_value}| < {shift_value}) = 2Ф({shift_value}/{b_value}) =\n' + str(2*Phi(shift_value/b_value)) + '\n'
 
 		answer += f'P(|ε - {a_value}| < {shift_value}) = '
-		answer += str(round(2*Phi(shift_value/b_value), 4)) + '\n'
+		answer += str(2*Phi(shift_value/b_value)) + '\n'
 
+		answer += f'P({low_value} < ε < {high_value}) = '
+		answer += f'{Phi((high_value - a_value) / b_value) - Phi((low_value - a_value) / b_value)}\n'
 
 		header = self._document.add_heading(f"\tЗадание 17\n", 2)
 		header.style = self._document.styles['QuestHeader']
@@ -1009,19 +753,6 @@ class DefaultGenerator(IGenerator):
 		paragraph = self._document.add_paragraph(f"\t{task}", style = self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 17\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{task}", style = self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 17, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{solving}\tОтвет: {answer}\n", style = self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(task)
 
 	def __quest18(self):
 		task = ''
@@ -1105,18 +836,3 @@ class DefaultGenerator(IGenerator):
 
 		paragraph = self._document.add_paragraph(f"\t{task}", style=self._document.styles['Normal'])
 		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._documentWTAnsw.add_heading(f"\tЗадание 18\n", 2)
-		header.style = self._documentWTAnsw.styles['QuestHeader']
-
-		paragraph = self._documentWTAnsw.add_paragraph(f"\t{task}", style=self._documentWTAnsw.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		header = self._document.add_heading(f"\tЗадание 18, ХОД РЕШЕНИЯ\n", 2)
-		header.style = self._document.styles['QuestHeader']
-
-		paragraph = self._document.add_paragraph(f"\t{solving}\tОтвет: {answer}\n",
-												 style=self._document.styles['Normal'])
-		paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-
-		self.tasks.append(task)
